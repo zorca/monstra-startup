@@ -1,0 +1,16 @@
+{
+  "name": "monstra-startup",
+  "version": "0.0.1",
+  "homepage": "https://github.com/zorca/monstra-startup",
+  "authors": [
+    "Zorca <vs@zorca.org>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

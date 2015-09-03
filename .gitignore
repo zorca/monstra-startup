@@ -37,3 +37,4 @@ Thumbs.db
 
 # ignore node files and folders
 node_modules/
+bower_components/
