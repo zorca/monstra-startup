@@ -5,6 +5,7 @@ Thumbs.db
 *.project
 *.sublime-project
 *.sublime-workspace
+.idea/
 
 # ignore user .htaccess
 /.htaccess
@@ -33,3 +34,6 @@ Thumbs.db
 /public/*
 /storage/*
 /tmp/*
+
+# ignore node files and folders
+node_modules/
