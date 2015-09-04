@@ -1,10 +1,27 @@
-include ../../global-blocks/_global-head
+include ../../global-blocks/**/**
+include blocks/**/**
 doctype
 html(lang='ru')
-+global-head('landing')
-body
-	header.s-header
-	section.s-section
-	section.s-section
-	section.s-section
-	footer.s-footer
+	+global-head('landing')
+	body
+		div(data-magellan-expedition='fixed')
+			dl.sub-nav
+				dd(data-magellan-arrival="intro")
+					a(href="#intro") intro
+				dd(data-magellan-arrival="advantages")
+					a(href="#advantages") Наши преимущества
+		// +c-menu
+		header.z-header z-header
+			<?php echo Block::get("header"); ?>
+		+section(1,'intro')
+		+section(2,'advantages','bg-img-map')
+		+section(3)
+		+section(4)
+		+section(5)
+		footer.z-footer z-footer
+			<?php echo Block::get("footer"); ?>
+		<?php Javascript::add('public/assets/js/jquery.min.js', 'frontend', 1); ?>
+		<?php Javascript::add('public/assets/js/fastclick.js', 'frontend', 2); ?>
+		<?php Javascript::add('public/assets/js/foundation.min.js', 'frontend', 3); ?>
+		<?php Javascript::add('public/themes/landing/scripts/main.js', 'frontend', 10); ?>
+		<?php Javascript::load(); ?>

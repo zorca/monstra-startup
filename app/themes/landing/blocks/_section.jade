@@ -1,0 +1,12 @@
+mixin section(number,id,mod)
+	unless id
+		- id = ''
+	unless mod
+		- mod = ''
+	else
+		- mod = ' z-section--'+mod
+	section(id=id class='z-section z-section--number-'+number+mod data-magellan-destination=id)
+		.z-row
+			.z-column
+				!='<?php echo Block::get("section-'+number+'"); ?>'
+	block

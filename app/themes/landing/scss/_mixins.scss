@@ -1,0 +1,13 @@
+@mixin s-bg-white {
+  background: white;
+}
+
+@mixin s-bg-ghost {
+  background: $ghost;
+}
+
+@mixin s-bg-img($imgpath) {
+  background-image: url($imgpath);
+  background-position: center center;
+  background-repeat: no-repeat;
+}
