@@ -1,40 +1,39 @@
-// Theme name
-var themename = 'landing';
+/*
+ * Config
+ */
 
-// Gulp plugins
-var gulp = require('gulp'),
-    gutil = require('gulp-util'),
-    rename = require('gulp-rename'),
-    jade = require('gulp-jade'),
-    scss = require('gulp-sass'),
+var config = require('./config.json');
+
+// Paths
+var dest_path        =  config.path.pub;
+
+/*
+ * Gulp plugins
+ */
+var del = require('del'),
+    gulp = require('gulp'),
+    runsequence = require('run-sequence'),
     connect = require('gulp-connect-php'),
     browsersync = require('browser-sync'),
+    reload  = browsersync.reload,
+    plumber = require('gulp-plumber'),
+    debug = require('gulp-debug'),
+    gulpif = require('gulp-if'),
+    gutil = require('gulp-util'),
+    jade = require('gulp-jade'),
+    less = require('gulp-less'),
+    scss = require('gulp-sass'),
+    csscomb = require('gulp-csscomb'),
+    cssmin = require('gulp-minify-css'),
+    notify = require('gulp-notify'),
     templatesglob = require('gulp-jade-globbing'),
-    stylesglob = require('gulp-css-globbing');
+    stylesglob = require('gulp-css-globbing'),
+    rename = require('gulp-rename');
 
-var displayError = function(error) {
-
-    // Initial building up of the error
-    var errorString = '[' + error.plugin + ']';
-    errorString += ' ' + error.message.replace("\n",''); // Removes new line at the end
-
-    // If the error contains the filename or line number add it to the string
-    if(error.fileName)
-        errorString += ' in ' + error.fileName;
-
-    if(error.lineNumber)
-        errorString += ' on line ' + error.lineNumber;
-
-    // This will output an error like the following:
-    // [gulp-sass] error message in file_name on line 1
-    gutil.log(gutil.colors.red(errorString));
+// Destination Path if Development Mode On
+if (config.options.dev_mode) {
+    dest_path = config.path.dev
 }
-
-// Bower task
-gulp.task('bower', function() {
-    return gulp.src('./bower_components/**/fonts/*.**')
-        .pipe(gulp.dest('./public/assets/fonts/'))
-});
 
 // Server task
 gulp.task('server', function() {
@@ -49,49 +48,74 @@ gulp.task('server', function() {
     });
 });
 
-// Task JADE
-gulp.task('templates', function() {
-    return gulp.src('./app/themes/'+themename+'/**/[^_]*.jade')
-        .pipe(templatesglob())
-        .on('error', function(err){
-            displayError(err);
-            this.emit('end');
-        })
-        .pipe(jade({
-            pretty: true
-        }))
-        .on('error', function(err){
-            displayError(err);
-            this.emit('end');
-        })
-        .pipe(rename({
-            extname: ".php"
-        }))
-        .pipe(gulp.dest('./public/themes/'+themename+'/'))
+// Clean Destination folder
+gulp.task('clean', function (cb) {
+    del(dest_path+'/'+config.folder.templates+'/'+config.folder.template_name+'*', cb);
 });
 
-// Task SASS
+// Templates task
+gulp.task('templates', function() {
+    return gulp.src(config.path.src+'/'+config.folder.templates+'/'+config.folder.template_name+'/**/[^_]*.jade')
+        .pipe(plumber({errorHandler: notify.onError("Error: <%= error.message %>")}))
+        .pipe(templatesglob())
+        .pipe(jade({
+            pretty: true,
+            locals: {
+                "template_name": config.folder.template_name,
+                "templates_folder": config.folder.templates,
+                "dev_mode": config.options.dev_mode
+            }
+        }))
+        .pipe(rename({
+            extname: config.options.templates_ext
+        }))
+        .pipe(gulp.dest(dest_path+'/'+config.folder.templates+'/'+config.folder.template_name))
+});
+
+// Styles task
 gulp.task('styles', function() {
-    return gulp.src('./app/themes/'+themename+'/scss/[^_]*.scss')
+    return gulp.src(config.path.src+'/'+config.folder.templates+'/'+config.folder.template_name+'/'+config.folder.styles+'/**/[^_]*.'+config.options.css_pre)
         .pipe(stylesglob({
-            extensions: ['.css', '.scss'],
+            extensions: ['.css',config.options.css_pre],
             scssImportPath: {
-                leading_underscore: false,
+                leading_underscore: true,
                 filename_extension: false
             }
         }))
-        .pipe(scss({errLogToConsole: true, includePaths: ['./bower_components/foundation/scss']}))
-        .on('error', function(err){
-            displayError(err);
-            this.emit('end');
-        })
-        .pipe(gulp.dest('./public/themes/'+themename+'/css/'));
+        .pipe(gulpif((config.options.css_pre==='scss'), scss({errLogToConsole: true})))
+        .pipe(gulpif((config.options.css_pre==='less'), less({errLogToConsole: true})))
+        .pipe(gulpif(!config.options.dev_mode, cssmin()))
+        .pipe(gulpif(!config.options.dev_mode, rename({extname: '.min.css'})))
+        .pipe(gulp.dest(dest_path+'/'+config.folder.templates+'/'+config.folder.template_name+'/'+config.folder.styles));
+});
+
+// Scripts task
+gulp.task('scripts', function() {
+    return gulp.src([config.path.src+'/'+config.folder.templates+'/'+config.folder.template_name+'/'+config.folder.scripts+'/**/[^_]*.js'])
+        .pipe(gulp.dest(dest_path+'/'+config.folder.templates+'/'+config.folder.template_name+'/'+config.folder.scripts));
+});
+
+// Fonts task
+gulp.task('fonts', function() {
+    return gulp.src([config.path.src+'/'+config.folder.templates+'/'+config.folder.template_name+'/'+config.folder.fonts+'/**/*'])
+        .pipe(gulp.dest(dest_path+'/'+config.folder.templates+'/'+config.folder.template_name+'/'+config.folder.fonts));
+});
+
+// Images task
+gulp.task('images', function() {
+    return gulp.src([config.path.src+'/'+config.folder.templates+'/'+config.folder.template_name+'/'+config.folder.images+'/**/*'])
+        .pipe(gulp.dest(dest_path+'/'+config.folder.templates+'/'+config.folder.template_name+'/'+config.folder.images));
 });
 
 // Watch tasks
 gulp.task('watch', function() {
-    gulp.watch('./app/themes/'+themename+'/**/*.jade', ['templates']);
-    gulp.watch('./app/themes/'+themename+'/**/*.scss', ['styles']);
+    gulp.watch(config.path.src+'/'+config.folder.templates+'/'+config.folder.template_name+'/**/*.jade', ['templates' , reload]);
+    gulp.watch(config.path.src+'/'+config.folder.templates+'/'+config.folder.template_name+'/**/*.less', ['styles', reload]);
+    gulp.watch(config.path.src+'/'+config.folder.templates+'/'+config.folder.template_name+'/**/*.scss', ['styles', reload]);
+    gulp.watch(config.path.src+'/'+config.folder.templates+'/'+config.folder.template_name+'/**/*.js', ['scripts', reload]);
 });
 
-gulp.task('default', ['server','templates','styles','watch']);
+// Default gulp task
+gulp.task('default', ['clean'], function() {
+    runsequence('templates','styles','scripts','fonts','images','watch','server');
+});

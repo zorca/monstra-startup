@@ -29,6 +29,21 @@
   }
 }
 
+.z-header {
+  min-height: 20rem;
+  text-align: center;
+  &-overlay {
+    position: absolute;
+    background-color: #2f3445;
+    height: 100%;
+    left: 0;
+    opacity: 0.3;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+  }
+}
+
 .z-footer {
   padding: 2rem 0;
 }

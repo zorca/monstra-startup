@@ -11,8 +11,10 @@ html(lang='ru')
 				dd(data-magellan-arrival="advantages")
 					a(href="#advantages") Наши преимущества
 		// +c-menu
-		header.z-header z-header
-			<?php echo Block::get("header"); ?>
+		header.z-header
+			.z-header-content
+				<?php echo Block::get("header"); ?>
+			.z-header-overlay
 		+section(1,'intro')
 		+section(2,'advantages','bg-img-map')
 		+section(3)

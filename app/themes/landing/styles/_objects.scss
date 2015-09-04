@@ -1,0 +1,16 @@
+/*
+ * Общие блоки шаблона
+ */
+
+.title {
+  color: $jet;
+  &--light {
+    color: $white-smoke;
+  }
+}
+
+.text {
+  &--large {
+    font-size: 1.5rem;
+  }
+}

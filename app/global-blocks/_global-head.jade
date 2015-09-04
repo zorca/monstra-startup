@@ -24,7 +24,7 @@ mixin global-head(templateDir)
 		meta(itemprop="name" content!="<?php echo Site::title(); ?> | <?php echo Site::name(); ?>")
 
 		// Styles
-		<?php Stylesheet::add('public/themes/!{templateDir}/css/main.css', 'frontend', 1); ?>
+		<?php Stylesheet::add('public/themes/!{templateDir}/styles/main.css', 'frontend', 1); ?>
 		<?php Stylesheet::load(); ?>
 
 		<?php Action::run('theme_header'); ?>

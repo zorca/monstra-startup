@@ -34,6 +34,7 @@ Thumbs.db
 /public/*
 /storage/*
 /tmp/*
+!/public/assets/
 
 # ignore node files and folders
 node_modules/

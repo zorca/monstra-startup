@@ -1,0 +1,21 @@
+{
+  "path": {
+  "src"             : "./app",
+  "dev"             : "./public",
+  "pub"             : "./pub"
+  },
+  "folder": {
+    "template_name" : "landing",
+    "templates"     : "themes",
+    "styles"        : "styles",
+    "scripts"       : "scripts",
+    "fonts"         : "fonts",
+    "images"        : "images"
+  },
+  "options": {
+    "css_pre"       : "scss",
+    "templates_ext" : ".php",
+    "dev_mode"      : true,
+    "dev_server"    : true
+  }
+}

@@ -12,5 +12,11 @@
     "bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.5",
+    "foundation": "~5.5.2",
+    "jquery": "~2.1.4",
+    "modernizr": "~2.8.3"
+  }
 }
